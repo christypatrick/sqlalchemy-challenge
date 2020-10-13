@@ -94,6 +94,35 @@ def stations():
     return jsonify(station_list)
 
 
+@app.route("/api/v1.0/tobs")
+def tobs():
+    """Return a list of temperatures"""
+
+# Query the dates and temperature observations of the most active station for the last year
+# Return a JSON list of observations for the previous year
+
+    # Open a communication session with the database
+    session = Session(engine)
+
+    # Query all stations
+    results = session.query(Measurement.date, Measurement.station, Measurement.tobs).\
+                filter(Measurement.station == "USC00519281").filter(Measurement.date >= "2016-08-18").all()
+  
+    # Convert the query results to a dictionary using date as the key and prcp as the value
+    temp12mo_list = []
+    for measurement in results:
+        temp12mo_dict = {}
+        temp12mo_dict["date"] = measurement.date
+        temp12mo_dict["station"] = measurement.station
+        temp12mo_dict["tobs"] = measurement.tobs
+        temp12mo_list.append(temp12mo_dict)
+
+    # close the session to end the communication with the database
+    session.close()
+
+    # Return the JSON representation of the dictionary
+    return jsonify(temp12mo_list)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
