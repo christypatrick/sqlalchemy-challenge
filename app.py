@@ -51,7 +51,7 @@ def precipitation():
     # Open a communication session with the database
     session = Session(engine)
 
-    # Query all passengers
+    # Query all dates
     results = session.query(Measurement.date, Measurement.prcp).\
                 order_by(Measurement.date).all()
 
@@ -67,6 +67,31 @@ def precipitation():
 
     # Return the JSON representation of the dictionary
     return jsonify(precipitation_data)
+
+@app.route("/api/v1.0/stations")
+def stations():
+    """Return a list of stations"""
+
+    # Open a communication session with the database
+    session = Session(engine)
+
+    # Query all stations
+    results = session.query(Station.id, Station.station, Station.name).all()
+  
+    # Convert the query results to a dictionary using date as the key and prcp as the value
+    station_list = []
+    for station in results:
+        station_dict = {}
+        station_dict["id"] = station.id
+        station_dict["station"] = station.station
+        station_dict["name"] = station.name
+        station_list.append(station_dict)
+
+    # close the session to end the communication with the database
+    session.close()
+
+    # Return the JSON representation of the dictionary
+    return jsonify(station_list)
 
 
 
