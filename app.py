@@ -40,8 +40,8 @@ def welcome():
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0//api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
-        # f"/api/v1.0//api/v1.0/<start><br/>"
-        # f"/api/v1.0//api/v1.0/<end><br/>"
+        f"/api/v1.0//api/v1.0/START_DATE<br/>"
+        f"/api/v1.0//api/v1.0/START_DATE/END_DATE"
     )
 
 @app.route("/api/v1.0/precipitation")
@@ -96,17 +96,14 @@ def stations():
 
 @app.route("/api/v1.0/tobs")
 def tobs():
-    """Return a list of temperatures"""
-
-# Query the dates and temperature observations of the most active station for the last year
-# Return a JSON list of observations for the previous year
+    """Return a list of dates and temperature observations of the most active station for the last year"""
 
     # Open a communication session with the database
     session = Session(engine)
 
     # Query all stations
     results = session.query(Measurement.date, Measurement.station, Measurement.tobs).\
-                filter(Measurement.station == "USC00519281").filter(Measurement.date >= "2016-08-18").all()
+                filter(Measurement.station == "USC00519281").filter(Measurement.date >= "2016-08-23").all()
   
     # Convert the query results to a dictionary
     temp12mo_list = []
