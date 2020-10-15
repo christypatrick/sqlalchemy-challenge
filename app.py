@@ -78,7 +78,7 @@ def stations():
     # Query all stations
     results = session.query(Station.id, Station.station, Station.name).all()
   
-    # Convert the query results to a dictionary using date as the key and prcp as the value
+    # Convert the query results to a dictionary
     station_list = []
     for station in results:
         station_dict = {}
@@ -108,7 +108,7 @@ def tobs():
     results = session.query(Measurement.date, Measurement.station, Measurement.tobs).\
                 filter(Measurement.station == "USC00519281").filter(Measurement.date >= "2016-08-18").all()
   
-    # Convert the query results to a dictionary using date as the key and prcp as the value
+    # Convert the query results to a dictionary
     temp12mo_list = []
     for measurement in results:
         temp12mo_dict = {}
@@ -123,6 +123,57 @@ def tobs():
     # Return the JSON representation of the dictionary
     return jsonify(temp12mo_list)
 
+
+@app.route("/api/v1.0/<start>")
+def calc_temp_start(start):
+    """Min, Avg, and Max temps for a list of dates greater than or equal to the start date"""
+    
+    # Open a communication session with the database
+    session = Session(engine)
+    
+    results = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
+        filter(Measurement.date >= start).all()
+ 
+   # Convert the query results to a dictionary 
+    start_date_list = []
+    for min, avg, max in results:
+        start_date_dict = {}
+        start_date_dict["lowest_temp"] = min
+        start_date_dict["avg_temp"] = avg
+        start_date_dict["max_temp"] = max
+        start_date_list.append(start_date_dict)
+
+    # close the session to end the communication with the database
+    session.close()
+
+    # Return the JSON representation of the dictionary
+    return jsonify(start_date_list)
+
+
+@app.route("/api/v1.0/<start_date>/<end_date>")
+def start_date_end_date(start_date, end_date):
+    """Min, Avg, and Max temps for a list of dates between the start date and end date"""
+    
+    # Open a communication session with the database
+    session = Session(engine)
+    
+    results = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
+        filter(Measurement.date >= start_date).filter(Measurement.date <= end_date).all()
+ 
+   # Convert the query results to a dictionary 
+    date_range_list = []
+    for min, avg, max in results:
+        date_range_dict = {}
+        date_range_dict["lowest_temp"] = min
+        date_range_dict["avg_temp"] = avg
+        date_range_dict["max_temp"] = max
+        date_range_list.append(date_range_dict)
+
+    # close the session to end the communication with the database
+    session.close()
+
+    # Return the JSON representation of the dictionary
+    return jsonify(date_range_list)
 
 if __name__ == '__main__':
     app.run(debug=True)
