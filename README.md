@@ -13,4 +13,5 @@ The precipitation analysis examines the rainfall amount over the last 12 months:
 ### Station Analysis
 
 The station analysis queries each station to identify the number of stations (9) and determine the station with the highest number of observations (USC00519281).  The following is a histogram of the last 12 months of temperature observations for the most active station, USC00519281:
+
 ![TOBS](https://github.com/christypatrick/sqlalchemy-challenge/blob/main/Resources/Temperature%20Data%20-%20Screenshot%20from%20Jupyter%20Notebook.png)
